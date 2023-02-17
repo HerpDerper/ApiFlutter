@@ -33,7 +33,7 @@ class HistoryPageState extends State<HistoryPage> {
     return sharedPreferences!.getString('token')!;
   }
 
-  Future<void> getNotes(String filter, String? search) async {
+  Future<void> getNotes(String filter, String search) async {
     try {
       Response response = await DIO.get('${URL.note.value}?filter=$filter&search=$search');
       if (response.data['message'] == 'Заметки не найдены') {
@@ -55,8 +55,7 @@ class HistoryPageState extends State<HistoryPage> {
       String text = controllerText.text;
       String category = controllerCategory.text;
 
-      Response response = await DIO.post(URL.note.value, data: Note(name: name, text: text, category: category));
-      print(response);
+      await DIO.post(URL.note.value, data: Note(name: name, text: text, category: category));
     } on DioError {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ошибка', textAlign: TextAlign.center)));
     }
