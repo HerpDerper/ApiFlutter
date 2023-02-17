@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../utils/url.dart';
 import '../models/user.dart';
 import '../screens/signIn_screen.dart';
-import '../interceptors/custom_interceptors.dart';
+import '../interceptors/custom_interceptor.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -26,7 +26,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       String email = controllerEmail.text;
       String password = controllerPassword.text;
 
-      DIO.interceptors.add(CustomInterceptors());
+      DIO.interceptors.add(CustomInterceptor());
       Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
       await DIO.put(URL.token.value, data: User(userName: userName, email: email, password: password));
     } on DioError {

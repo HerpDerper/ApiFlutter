@@ -6,7 +6,7 @@ import '../utils/url.dart';
 import '../models/user.dart';
 import '../screens/user_sceen.dart';
 import '../screens/signUp_screen.dart';
-import '../interceptors/custom_interceptors.dart';
+import '../interceptors/custom_interceptor.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -31,7 +31,7 @@ class SignInScreenState extends State<SignInScreen> {
       String userName = controllerUsername.text;
       String password = controllerPassword.text;
 
-      DIO.interceptors.add(CustomInterceptors());
+      DIO.interceptors.add(CustomInterceptor());
 
       Response response = await DIO.post(URL.token.value, data: User(userName: userName, password: password));
       setTokenSharedPreferences(response.data['data']['accessToken']);

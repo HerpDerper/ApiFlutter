@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-class CustomInterceptors extends QueuedInterceptor {
+class CustomInterceptor extends QueuedInterceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) => super.onError(err, handler);
 

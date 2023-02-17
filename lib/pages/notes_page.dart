@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/url.dart';
 import '../models/note.dart';
-import '../cubit/note_cubit.dart';
-import '../interceptors/custom_interceptors.dart';
+import '../cubit/notes_cubit.dart';
+import '../interceptors/custom_interceptor.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -55,7 +55,7 @@ class HistoryPageState extends State<HistoryPage> {
       String text = controllerText.text;
       String category = controllerCategory.text;
 
-      await DIO.post(URL.note.value, data: Note(name: name, text: text, category: category));
+      await DIO.put(URL.note.value, data: Note(name: name, text: text, category: category));
     } on DioError {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ошибка', textAlign: TextAlign.center)));
     }
@@ -67,7 +67,7 @@ class HistoryPageState extends State<HistoryPage> {
       String text = controllerText.text;
       String category = controllerCategory.text;
 
-      await DIO.put('${URL.note.value}/$number', data: Note(name: name, text: text, category: category));
+      await DIO.post('${URL.note.value}/$number', data: Note(name: name, text: text, category: category));
     } on DioError {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ошибка', textAlign: TextAlign.center)));
     }
@@ -87,7 +87,7 @@ class HistoryPageState extends State<HistoryPage> {
     initSharedPreferences().then((value) async {
       String token = getTokenSharedPreferences();
       DIO.options.headers['Authorization'] = "Bearer $token";
-      DIO.interceptors.add(CustomInterceptors());
+      DIO.interceptors.add(CustomInterceptor());
       getNotes(filter, '');
     });
   }

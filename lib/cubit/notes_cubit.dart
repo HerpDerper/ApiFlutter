@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../models/note.dart';
 
-part 'note_state.dart';
+part 'notes_state.dart';
 
 class NotesCubit extends Cubit<NotesState> {
   NotesCubit() : super(NotesInitial());

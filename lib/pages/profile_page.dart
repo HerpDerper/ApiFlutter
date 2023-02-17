@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/url.dart';
 import '../models/user.dart';
 import '../screens/signIn_screen.dart';
-import '../interceptors/custom_interceptors.dart';
+import '../interceptors/custom_interceptor.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -48,7 +48,7 @@ class ProfilePageState extends State<ProfilePage> {
     initSharedPreferences().then((value) async {
       String token = getTokenSharedPreferences();
       DIO.options.headers['Authorization'] = "Bearer $token";
-      DIO.interceptors.add(CustomInterceptors());
+      DIO.interceptors.add(CustomInterceptor());
       Response response = await DIO.get(URL.user.value);
       controllerEmail.text = response.data['data']['email'];
       controllerUsername.text = response.data['data']['userName'];
