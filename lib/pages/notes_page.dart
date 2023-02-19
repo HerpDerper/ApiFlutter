@@ -23,7 +23,7 @@ class HistoryPageState extends State<HistoryPage> {
   SharedPreferences? sharedPreferences;
   Dio DIO = Dio();
   List<Note> notes = [];
-  String filter = 'all';
+  String filter = '';
 
   Future<void> initSharedPreferences() async => sharedPreferences = await SharedPreferences.getInstance();
 
@@ -35,7 +35,7 @@ class HistoryPageState extends State<HistoryPage> {
 
   Future<void> getNotes(String filter, String search) async {
     try {
-      Response response = await DIO.get('${URL.note.value}?filter=$filter&search=$search');
+      Response response = await DIO.get(URL.note.value, queryParameters: {'filter': filter, 'search': search});
       if (response.data['message'] == 'Заметки не найдены') {
         context.read<NotesCubit>().clearNotes();
         return;
@@ -92,7 +92,7 @@ class HistoryPageState extends State<HistoryPage> {
     });
   }
 
-  void showCreateDialog() {
+  void showNoteDialog(Note? note) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -178,132 +178,18 @@ class HistoryPageState extends State<HistoryPage> {
                           ),
                           onPressed: () async {
                             if (!key.currentState!.validate()) return;
-                            await createNote();
+                            if (note == null) {
+                              await createNote();
+                            } else {
+                              await updateNote(note.number!);
+                            }
                             getNotes(filter, '');
                             controllerName.text = '';
                             controllerText.text = '';
                             controllerCategory.text = '';
                             Navigator.of(context).pop();
                           },
-                          child: const Text("Добавить"),
-                        ),
-                        const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: const Color.fromARGB(255, 63, 57, 102),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("Отмена"),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void showUpdateDialog(Note note) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: const Color.fromARGB(255, 24, 19, 54),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          child: SizedBox(
-            width: 300,
-            height: 340,
-            child: Column(
-              children: [
-                Center(
-                  child: Form(
-                    key: key,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: controllerName,
-                          validator: ((value) {
-                            if (value == null || value.isEmpty) {
-                              return "Наименование не должно быть пустым";
-                            }
-                            return null;
-                          }),
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                            labelStyle: TextStyle(color: Colors.white),
-                            labelText: "Наименование",
-                          ),
-                        ),
-                        const Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 5)),
-                        TextFormField(
-                          controller: controllerText,
-                          validator: ((value) {
-                            if (value == null || value.isEmpty) {
-                              return "Текст не должен быть пустым";
-                            }
-                            return null;
-                          }),
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                            labelStyle: TextStyle(color: Colors.white),
-                            labelText: "Текст",
-                          ),
-                        ),
-                        const Padding(padding: EdgeInsets.fromLTRB(25, 5, 25, 5)),
-                        TextFormField(
-                          controller: controllerCategory,
-                          validator: ((value) {
-                            if (value == null || value.isEmpty) {
-                              return "Категория не должна быть пустой";
-                            }
-                            return null;
-                          }),
-                          style: const TextStyle(color: Colors.white),
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                            labelStyle: TextStyle(color: Colors.white),
-                            labelText: "Категория",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: const Color.fromARGB(255, 63, 57, 102),
-                          ),
-                          onPressed: () async {
-                            if (!key.currentState!.validate()) return;
-                            await updateNote(note.number!);
-                            getNotes(filter, '');
-                            controllerName.text = '';
-                            controllerText.text = '';
-                            controllerCategory.text = '';
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("Изменть"),
+                          child: const Text("Сохранить"),
                         ),
                         const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
                         ElevatedButton(
@@ -371,7 +257,7 @@ class HistoryPageState extends State<HistoryPage> {
                     PopupMenuItem(
                       child: const Text("По умолчанию"),
                       onTap: () {
-                        filter = 'all';
+                        filter = '';
                         getNotes(filter, '');
                       },
                     ),
@@ -413,7 +299,7 @@ class HistoryPageState extends State<HistoryPage> {
                               controllerName.text = note.name;
                               controllerText.text = note.text;
                               controllerCategory.text = note.category;
-                              Future.delayed(const Duration(seconds: 0), () => showUpdateDialog(note));
+                              Future.delayed(const Duration(seconds: 0), () => showNoteDialog(note));
                             },
                           ),
                         PopupMenuItem(
@@ -434,7 +320,7 @@ class HistoryPageState extends State<HistoryPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showCreateDialog(),
+        onPressed: () => showNoteDialog(null),
         child: const Icon(Icons.add),
       ),
     );
