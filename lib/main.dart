@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:desktop_window/desktop_window.dart';
 
 import 'cubit/notes_cubit.dart';
 import 'pages/notes_page.dart';

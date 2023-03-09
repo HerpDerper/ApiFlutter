@@ -24,6 +24,7 @@ class HistoryPageState extends State<HistoryPage> {
   Dio DIO = Dio();
   List<Note> notes = [];
   String filter = '';
+  String search = '';
 
   Future<void> initSharedPreferences() async => sharedPreferences = await SharedPreferences.getInstance();
 
@@ -79,6 +80,14 @@ class HistoryPageState extends State<HistoryPage> {
     }
   }
 
+  Future<void> restoreNote(int number) async {
+    try {
+      await DIO.get('${URL.note.value}/$number', queryParameters: {'restore': true});
+    } on DioError {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Ошибка', textAlign: TextAlign.center)));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -86,7 +95,7 @@ class HistoryPageState extends State<HistoryPage> {
       String token = getTokenSharedPreferences();
       DIO.options.headers['Authorization'] = "Bearer $token";
       DIO.interceptors.add(CustomInterceptor());
-      getNotes(filter, '');
+      getNotes(filter, search);
     });
   }
 
@@ -100,6 +109,7 @@ class HistoryPageState extends State<HistoryPage> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Center(
                   child: Form(
@@ -180,7 +190,7 @@ class HistoryPageState extends State<HistoryPage> {
                             } else {
                               await updateNote(note.number!);
                             }
-                            getNotes(filter, '');
+                            getNotes(filter, search);
                             controllerName.text = '';
                             controllerText.text = '';
                             controllerCategory.text = '';
@@ -195,6 +205,9 @@ class HistoryPageState extends State<HistoryPage> {
                             backgroundColor: const Color.fromARGB(255, 63, 57, 102),
                           ),
                           onPressed: () {
+                            controllerName.text = '';
+                            controllerText.text = '';
+                            controllerCategory.text = '';
                             Navigator.of(context).pop();
                           },
                           child: const Text("Отмена"),
@@ -223,7 +236,10 @@ class HistoryPageState extends State<HistoryPage> {
           height: 40,
           child: Center(
             child: TextField(
-              onSubmitted: (value) => getNotes(filter, value),
+              onSubmitted: (value) {
+                search = value;
+                getNotes(filter, search);
+              },
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search, color: Colors.white),
@@ -234,28 +250,28 @@ class HistoryPageState extends State<HistoryPage> {
                       child: const Text("Добавленные"),
                       onTap: () {
                         filter = 'created';
-                        getNotes(filter, '');
+                        getNotes(filter, search);
                       },
                     ),
                     PopupMenuItem(
                       child: const Text("Измененные"),
                       onTap: () {
                         filter = 'updated';
-                        getNotes(filter, '');
+                        getNotes(filter, search);
                       },
                     ),
                     PopupMenuItem(
                       child: const Text("Удаленные"),
                       onTap: () {
                         filter = 'deleted';
-                        getNotes(filter, '');
+                        getNotes(filter, search);
                       },
                     ),
                     PopupMenuItem(
                       child: const Text("По умолчанию"),
                       onTap: () {
                         filter = '';
-                        getNotes(filter, '');
+                        getNotes(filter, search);
                       },
                     ),
                   ],
@@ -299,13 +315,22 @@ class HistoryPageState extends State<HistoryPage> {
                               Future.delayed(const Duration(seconds: 0), () => showNoteDialog(note));
                             },
                           ),
-                        PopupMenuItem(
-                          child: const Text("Удалить"),
-                          onTap: () async {
-                            deleteNote(state.notes.elementAt(index).number!);
-                            context.read<NotesCubit>().deleteNote(index);
-                          },
-                        ),
+                        if (state.notes.elementAt(index).status != 'deleted')
+                          PopupMenuItem(
+                            child: const Text("Удалить"),
+                            onTap: () async {
+                              deleteNote(state.notes.elementAt(index).number!);
+                              context.read<NotesCubit>().deleteNote(index);
+                            },
+                          ),
+                        if (state.notes.elementAt(index).status == 'deleted')
+                          PopupMenuItem(
+                            child: const Text("Восстановить"),
+                            onTap: () async {
+                              restoreNote(state.notes.elementAt(index).number!);
+                              context.read<NotesCubit>().deleteNote(index);
+                            },
+                          ),
                       ],
                     ),
                   ),
