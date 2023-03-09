@@ -20,10 +20,7 @@ class UserScreenState extends State<UserScreen> {
       backgroundColor: const Color.fromARGB(255, 38, 35, 55),
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.note), label: 'Записи'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль')
-        ],
+        items: const [BottomNavigationBarItem(icon: Icon(Icons.note), label: 'Записи'), BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль')],
         backgroundColor: const Color.fromARGB(255, 38, 35, 55),
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.white,

@@ -4,8 +4,7 @@ part 'note.freezed.dart';
 
 @freezed
 class Note with _$Note {
-  const factory Note(
-      {required String name, required String text, required String category, int? number, String? status}) = _Note;
+  const factory Note({required String name, required String text, required String category, int? number, String? status}) = _Note;
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 }

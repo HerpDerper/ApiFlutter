@@ -7,11 +7,11 @@ import 'cubit/notes_cubit.dart';
 import 'pages/notes_page.dart';
 import '../screens/signIn_screen.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await DesktopWindow.setMaxWindowSize(const Size(400, 450));
-    await DesktopWindow.setMaxWindowSize(const Size(400, 450));
+    await DesktopWindow.setMinWindowSize(const Size(400, 450));
     await DesktopWindow.setWindowSize(const Size(400, 450));
   }
   runApp(const App());

@@ -29,9 +29,7 @@ class HistoryPageState extends State<HistoryPage> {
 
   void clearSharedPreferences() async => await sharedPreferences!.clear();
 
-  String getTokenSharedPreferences() {
-    return sharedPreferences!.getString('token')!;
-  }
+  String getTokenSharedPreferences() => sharedPreferences!.getString('token')!;
 
   Future<void> getNotes(String filter, String search) async {
     try {
@@ -99,9 +97,8 @@ class HistoryPageState extends State<HistoryPage> {
         return Dialog(
           backgroundColor: const Color.fromARGB(255, 24, 19, 54),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          child: SizedBox(
-            width: 300,
-            height: 340,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
             child: Column(
               children: [
                 Center(

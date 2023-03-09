@@ -30,8 +30,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
       await DIO.put(URL.token.value, data: User(userName: userName, email: email, password: password));
     } on DioError {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Данный логин уже занят', textAlign: TextAlign.center)));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Данный логин уже занят', textAlign: TextAlign.center)));
     }
   }
 

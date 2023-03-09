@@ -37,8 +37,7 @@ class SignInScreenState extends State<SignInScreen> {
       setTokenSharedPreferences(response.data['data']['accessToken']);
       Navigator.push(context, MaterialPageRoute(builder: (context) => const UserScreen()));
     } on DioError {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Неверный логин или пароль', textAlign: TextAlign.center)));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Неверный логин или пароль', textAlign: TextAlign.center)));
     }
   }
 
@@ -84,8 +83,7 @@ class SignInScreenState extends State<SignInScreen> {
                     ElevatedButton(onPressed: () async => auth(), child: const Text("Войти")),
                     const Padding(padding: EdgeInsets.fromLTRB(25, 5, 25, 5)),
                     ElevatedButton(
-                      onPressed: () =>
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen())),
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen())),
                       child: const Text("Зарегистрироваться"),
                     ),
                   ],
